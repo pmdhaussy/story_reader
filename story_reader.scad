@@ -6,9 +6,8 @@ include <audio.scad>;
 /*
  * TODO
  * - Status LED
- * - Back cover supports (poles)
  * - Speaker supports
- * - Buttons circuit support
+ * - Volume/play/pause circuit support
  * - Main board support
  */
 
@@ -22,7 +21,9 @@ box_wall_thickness=3;
 buttons_y_offset=box_y_len*0.37;
 volume_button_radius=13;
 
-front(display_accessories=false);
+// front(display_accessories=true);
+// front(display_accessories=false);
+speaker_support();
 
 module front(display_accessories=true) {
   difference() {
@@ -37,11 +38,12 @@ module front(display_accessories=true) {
       // Left speaker vent
       translate([30, 0, 0])
         rotate([0, 0, 45])
-          speaker_vent();
+          speaker_sound_hole(100);
       // Right speaker vent
       translate([-30, 0, 0])
         rotate([0, 0, 135])
-          translate([0, -31, 0]) speaker_vent();
+          translate([0, -31, 0])
+            speaker_sound_hole(100);
 
       // "Previous" button
       translate([-60, -7.25, 0])
@@ -169,4 +171,17 @@ module back_cover_support() {
     cube([5, 5, box_z_len-2*box_wall_thickness]);
     translate([2.5, 2.5, 0]) cylinder(box_z_len, 1.5, 1.5);
   }
+}
+
+module speaker_support() {
+  // Support
+  difference() {
+    cube([x_len, y_len, box_wall_thickness]);
+    speaker_sound_hole(height=box_wall_thickness);
+    speaker_fixation_holes(height=box_wall_thickness);
+  }
+  speaker_mesh(height=box_wall_thickness);
+  // This part is inserted in box surface
+  translate([0, 0, box_wall_thickness])
+    speaker_mesh(height=box_wall_thickness);
 }
